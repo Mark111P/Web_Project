@@ -1,0 +1,164 @@
+﻿<script>
+    let isGame = false;
+    let img1 = null;
+    let img2 = null;
+    let gamePairCount = 0;
+    let rotatedPairCount = 0;
+    let startTime = null;
+    let rotatedTimes = 0;
+
+    async function changeGame(e) {
+        let gameDiv = document.getElementsByClassName('gameDiv')[0];
+        if (isGame == true) {
+            e.target.submit.value = 'Start';
+            endGame();
+        }
+        else {
+            e.target.submit.value = 'End';
+            await startGame(parseInt(e.target.pairCount.value));
+        }
+    }
+    async function startGame(pairCount) {
+        let gameDiv = document.getElementsByClassName('gameDiv')[0];
+        isGame = true;
+        gamePairCount = pairCount;
+
+        let url = "https://localhost:7017/GameApi/GetRandom?pairCount=" + pairCount;
+        let responce = await fetch(url);
+        if (responce.ok) {
+            let obj = await responce.json();
+            fillGrid(obj["random"]);
+        }
+        gameDiv.style.display = 'grid';
+        startTime = new Date();
+    }
+    function endGame() {
+        let gameDiv = document.getElementsByClassName('gameDiv')[0];
+        isGame = false;
+        img1 = null;
+        img2 = null;
+        gamePairCount = 0;
+        rotatedPairCount = 0;
+        gameDiv.style.display = 'none';
+        startTime = null;
+        rotatedTimes = 0;
+        changeGameInfoText();
+    }
+    function clearGrid() {
+        let gameDiv = document.getElementsByClassName('gameDiv')[0];
+        for (let i = gameDiv.childElementCount - 1; i >= 0; i--) {
+            gameDiv.removeChild(gameDiv.children[i]);
+        }
+    }
+    function fillGrid(objRandom) {
+        let xCount = 6;
+        if (objRandom.length == 16) {
+            xCount = 4;
+        }
+        clearGrid();
+        let gameDiv = document.getElementsByClassName('gameDiv')[0];
+        gameDiv.style.gridTemplateColumns = "repeat(" + xCount + ", 100px)";
+
+        for (let i = 0; i < objRandom.length; i++) {
+            let backImg = document.createElement("img");
+            let tmp = objRandom[i];
+            backImg.src = "Images/" + tmp + ".jpg";
+            backImg.className = "backImg";
+
+            let frontImg = document.createElement("img");
+            frontImg.src = "Images/0.jpg";
+            frontImg.className = "frontImg";
+
+            frontImg.style.transform = 'perspective(300px) rotateY(0deg)';
+            backImg.style.transform = 'perspective(300px) rotateY(-180deg)';
+
+            let imgDiv = document.createElement("div");
+            imgDiv.className = "imgDiv";
+            imgDiv.append(frontImg, backImg);
+            imgDiv.addEventListener("click", function() { rotateImg(this) });
+
+            gameDiv.append(imgDiv);
+        }
+    }
+    async function rotateImg(e) {
+        let frontImg = e.children[0];
+        let backImg = e.children[1];
+        let notRotated = frontImg.style.transform == 'perspective(300px) rotateY(0deg)';
+
+        if (notRotated) {
+            doBack(e);
+            if (img1 == null) {
+                img1 = e;
+            }
+            else if (img2 == null) {
+                rotatedTimes++;
+                img2 = e;
+                if (getSrc(img1) == getSrc(img2)) {
+                    doDark(img1);
+                    doDark(img2);
+                    rotatedPairCount++;
+                    if (gamePairCount == rotatedPairCount) {
+                        endTime = new Date();
+                        let timeSpan = endTime.getTime() - startTime.getTime();
+
+                        let textTime = new Date(timeSpan).getMinutes() + ':' + new Date(timeSpan).getSeconds() + ':' + new Date(timeSpan).getMilliseconds();
+                        let login = '@ViewData["login"]';
+
+                        await sendRecord(login, gamePairCount, rotatedTimes, textTime);
+                    }
+                }
+            }
+            else {
+                if (getSrc(img1) != getSrc(img2)) {
+                    doFront(img1);
+                    doFront(img2);
+                }
+                img1 = e;
+                img2 = null;
+            }
+        }
+    }
+    function doFront(e) {
+        let frontImg = e.children[0];
+        let backImg = e.children[1];
+
+        frontImg.style.transform = 'perspective(300px) rotateY(0deg)';
+        backImg.style.transform = 'perspective(300px) rotateY(-180deg)';
+    }
+    function doBack(e) {
+        let frontImg = e.children[0];
+        let backImg = e.children[1];
+
+        frontImg.style.transform = 'perspective(300px) rotateY(180deg)';
+        backImg.style.transform = 'perspective(300px) rotateY(0deg)';
+    }
+    function getSrc(e) {
+        return e.children[1].src;
+    }
+    function doDark(e) {
+        e.style.filter = 'brightness(30%)';
+    }
+    async function sendRecord(login, pairCount, attemptCount, time) {
+        let url = "https://localhost:7017/GameApi/AddRecord?login=" + login +
+        "&pairCount=" + pairCount + "&attemptCount=" + attemptCount + "&time=" + time;
+
+        let responce = await fetch(url);
+
+        let text = "Attempts: " + attemptCount + "; Time: " + time;
+        changeGameInfoText(text);
+    }
+    function changeGameInfoText(text = "") {
+        let gameInfo = document.getElementsByClassName('gameInfo')[0];
+        gameInfo.textContent = text;
+    }
+</script>
+<form onsubmit="changeGame(event); return false">
+    <select class="mySelect" name="pairCount">
+        <option value="8">4x4</option>
+        <option value="12">4x6</option>
+        <option value="18">6x6</option>
+    </select>
+    <input class="mySubmit" type="submit" name="submit" value="Start"/>
+</form><br />
+<div class="gameDiv"></div>
+<div class="gameInfo"></div>

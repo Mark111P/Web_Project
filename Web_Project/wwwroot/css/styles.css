@@ -1,0 +1,124 @@
+﻿.pageTabMenu {
+    background-color: rgb(5, 0, 50);
+}
+.pageTabMenu > li {
+    padding: 15px;
+    background-color: rgb(5, 0, 50);
+    transition-duration: 0.5s;
+}
+.pageTabMenu > li:hover {
+    background-color: rgb(200, 255, 240);
+}
+.pageTabMenu > li > a {
+    padding: 15px;
+    color: rgb(200, 255, 240);
+    text-decoration: none;
+    font-weight: bold;
+    transition-duration: 0.5s;
+}
+.pageTabMenu > li:hover > a {
+    color: rgb(5, 0, 50);
+}
+
+body {
+    background-color: rgb(0, 15, 30);
+    color: rgb(200, 255, 240);
+}
+h5 {
+    color: rgb(200, 255, 240);
+    text-align: center;
+    width: 400px;
+    margin-left: calc(50% - 200px);
+}
+.myForm {
+    width: 400px;
+    margin-left: calc(50% - 200px);
+}
+.myInput {
+    color: rgb(200, 255, 240);
+    background-color: inherit;
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 10px;
+    border-bottom: 1px solid rgb(200, 255, 240);
+    outline: none;
+    transition-duration: 0.5s;
+}
+.myInput::placeholder {
+    color: rgb(100, 178, 157);
+    transition-duration: 0.5s;
+}
+.myInput:focus {
+    color: rgb(123, 255, 113);
+    border-bottom: 1px solid rgb(123, 255, 113);
+}
+.myInput:focus::placeholder {
+    color: rgb(46, 155, 48);
+}
+.mySubmit {
+    width: 100px;
+    background-color: rgb(200, 255, 240);
+    color: rgb(5, 0, 50);
+    padding: 5px;
+    border-radius: 10px;
+    border: none;
+    margin-top: 20px;
+    transition-duration: 0.5s;
+}
+.mySubmit:hover {
+    background-color: rgb(5, 0, 50);
+    color: rgb(200, 255, 240);
+    box-shadow: rgb(200, 255, 240) 0 0 10px;
+}
+.centerSubmit {
+    margin-left: calc(50% - 50px);
+}
+.errorDiv {
+    text-align: right;
+    color: rgb(255, 115, 115);
+    width: 400px;
+    margin-left: calc(50% - 200px);
+}
+.gameDiv {
+    display: none;
+    grid-gap: 10px;
+}
+.imgDiv {
+    width: 100px;
+    height: 100px;
+    display: block;
+    transition-duration: 0.5s;
+}
+.imgDiv > img {
+    width: 100px;
+    height: 100px;
+    transition-duration: 0.5s;
+    backface-visibility: hidden;
+    position: absolute;
+    border-radius: 20px;
+}
+.frontImg {
+    cursor: pointer;
+}
+.mySelect {
+    min-width: 100px;
+    padding: 5px;
+    background-color: rgb(200, 255, 240);
+    color: rgb(5, 0, 50);
+    outline: none;
+    border-radius: 10px;
+}
+.gameInfo {
+    font-weight: bold;
+    padding: 5px;
+    margin-top: 20px;
+}
+.myTable {
+    border-collapse: collapse;
+}
+td, th {
+    padding: 10px;
+    border: 1px solid rgb(200, 255, 240);
+}

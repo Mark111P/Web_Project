@@ -1,0 +1,66 @@
+﻿<script>
+    async function getRecords(e) {
+        let login = e.target.login.value;
+        let orderBy = e.target.orderBy.value;
+        let pairCount = e.target.pairCount.value;
+        let url = "https://localhost:7017/GameApi/GetRecords?login=" + login + "&orderBy=" + orderBy + "&pairCount=" + pairCount;
+        let responce = await fetch(url);
+        if (responce.ok) {
+            let obj = await responce.json();
+            let records = obj["records"];
+            fillTable(records);
+        }
+    }
+    function fillTable(records) {
+        clearTable();
+        let trTh = 
+            "<tr>" +
+                "<th>Place</th>" +
+                "<th>User</th>" +
+                "<th>GameType</th>" +
+                "<th>Attempts</th>" +
+                "<th>Time</th>" +
+            "</tr>";
+
+        let table = document.getElementsByClassName('myTable')[0];
+        table.innerHTML += trTh;
+
+        for (let i = 0; i < records.length; i++) {
+            let record = records[i];
+            let trTd =
+                "<tr>" +
+                    "<th>" + (i + 1) + "</th>" +
+                    "<th>" + record.login + "</th>" +
+                    "<th>" + record.gameType + "</th>" +
+                    "<th>" + record.attempts + "</th>" +
+                    "<th>" + record.time + "</th>" +
+                "</tr>";
+
+            table.innerHTML += trTd;
+        }
+    }
+    function clearTable(){
+        let table = document.getElementsByClassName('myTable')[0];
+        table.innerHTML = "";
+    }
+</script>
+
+<form onsubmit="getRecords(event); return false">
+    <select class="mySelect" name="login">
+        <option value="@ViewData["login"]">Mine</option>
+        <option value="ALL">All</option>
+    </select>
+    <select class="mySelect" name="orderBy">
+        <option value="attempts">Order by Attempts</option>
+        <option value="time">Order by Time</option>
+        <option value="last">Last</option>
+    </select>
+    <select class="mySelect" name="pairCount">
+        <option value="8">4x4</option>
+        <option value="12">4x6</option>
+        <option value="18">6x6</option>
+    </select>
+    <input class="mySubmit" type="submit" value="Get Records" />
+</form><br />
+
+<table class="myTable"></table>

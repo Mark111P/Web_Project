@@ -1,0 +1,48 @@
+﻿<script>
+    async function checkLogin(e) {
+        let login = e.target.login.value;
+        let password = e.target.password.value;
+
+        if (!/^[a-z0-9]{3,20}$/gm.test(login)) {
+            changeErrorDivText("Wrong login!")
+        }
+        else if (!/^[a-z0-9]{8,20}$/gm.test(password)) {
+            changeErrorDivText("Wrong password!")
+        }
+        else {
+            let url = "https://localhost:7017/AccountApi/CheckLogin?login=" + login + "&password=" + password;
+            let responce = await fetch(url);
+            if (responce.ok) {
+                let obj = await responce.json();
+                let message = obj["message"];
+
+                if (message == "ok") {
+                    login = obj["login"];
+
+                    e.target.login.value = login;
+                    e.target.submit();
+                }
+                else if (message == "loginError") {
+                    changeErrorDivText("Login error");
+                }
+                else if (message == "passwordError") {
+                    changeErrorDivText("Password error");
+                }
+            }
+            else{
+                changeErrorDivText("Error");
+            }
+        }
+    }
+    function changeErrorDivText(text) {
+        document.getElementsByClassName("errorDiv")[0].textContent = text;
+    }
+</script>
+
+<h5>Login</h5>
+<form class="myForm" asp-action="Authorize" onsubmit="checkLogin(event); return false">
+    <input class="myInput" type="text" name="login" placeholder="Login([a-z, 0-9]: 3-20)" minlength="3" maxlength="20" required oninput="changeErrorDivText('')"/><br />
+    <input class="myInput" type="password" name="password" placeholder="Password([a-z, 0-9]: 8-20)" minlength="8" maxlength="20" required oninput="changeErrorDivText('')" /><br />
+    <input class="mySubmit centerSubmit" type="submit" value="Submit" />
+</form>
+<div class="errorDiv"></div>

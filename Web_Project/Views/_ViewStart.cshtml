@@ -1,0 +1,10 @@
+﻿@{
+    if (this.User.Identity.IsAuthenticated)
+    {
+        Layout = "~/Views/Shared/Layouts/_LayoutGame.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/Layouts/_LayoutAccount.cshtml";
+    }
+}
